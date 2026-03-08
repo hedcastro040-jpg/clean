@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoBrillo Pro - Expertos en Limpieza y Aseo Profesional</title>
+    <!-- React y Babel -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        .bg-green-gradient { background: linear-gradient(135deg, #059669 0%, #10b981 100%); }
+        .glass-effect { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // --- ICONOS SVG ---
+        const IconCheck = () => <svg className="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>;
+        const IconSparkles = () => <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-7.714 2.143L11 21l-2.286-6.857L1 12l7.714-2.143L11 3z"></path></svg>;
+        const IconMail = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>;
+        const IconWhatsapp = () => <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.748-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298L10.75 10.3c.043.101.087.217.014.346-.072.13-.109.217-.217.346-.108.13-.227.289-.325.389-.108.11-.221.231-.094.448.127.217.565.932 1.213 1.508.835.744 1.54.974 1.756 1.082.217.108.346.091.477-.06.13-.151.563-.657.715-.881.152-.224.303-.187.512-.11.209.077 1.33.627 1.56.743.23.116.383.173.44.274.057.101.057.585-.087.99z"/></svg>;
+
+        // --- COMPONENTE CHAT IA ---
+        const AIChatBot = () => {
+            const [isOpen, setIsOpen] = useState(false);
+            const [messages, setMessages] = useState([
+                { id: 1, text: "¡Hola! Soy CleanBot, tu asistente de IA. ¿En qué puedo ayudarte hoy?", sender: 'bot' }
+            ]);
+            const [input, setInput] = useState("");
+            const chatEndRef = useRef(null);
+
+            const scrollToBottom = () => {
+                chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+            };
+
+            useEffect(() => { scrollToBottom(); }, [messages]);
+
+            const handleSend = () => {
+                if (!input.trim()) return;
+                
+                const userMsg = { id: Date.now(), text: input, sender: 'user' };
+                setMessages(prev => [...prev, userMsg]);
+                setInput("");
+
+                // Simulación de "IA" lógica
+                setTimeout(() => {
+                    let botResponse = "Lo siento, no entiendo. ¿Quieres que un asesor humano te llame? Escribe 'presupuesto'.";
+                    const query = input.toLowerCase();
+                    
+                    if (query.includes("hola") || query.includes("buenos días")) botResponse = "¡Hola! Un gusto saludarte. ¿Buscas limpieza para tu hogar u oficina?";
+                    else if (query.includes("precio") || query.includes("costo") || query.includes("presupuesto")) botResponse = "Los precios varían según el tamaño. Puedes llenar el formulario de la web o decirme cuántos metros cuadrados tienes.";
+                    else if (query.includes("oficina") || query.includes("empresa")) botResponse = "Tenemos planes corporativos excelentes. Incluyen limpieza de vidrios, pisos y desinfección profunda.";
+                    else if (query.includes("hogar") || query.includes("casa")) botResponse = "Ofrecemos limpieza express y profunda para hogares. ¿Deseas agendar para esta semana?";
+                    
+                    setMessages(prev => [...prev, { id: Date.now() + 1, text: botResponse, sender: 'bot' }]);
+                }, 1000);
+            };
+
+            return (
+                <div className="fixed bottom-24 right-6 z-50 flex flex-col items-end">
+                    {isOpen && (
+                        <div className="w-80 h-96 bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden mb-4 border border-green-100">
+                            <div className="bg-green-600 p-4 text-white font-bold flex justify-between items-center">
+                                <span>Asistente Virtual IA</span>
+                                <button onClick={() => setIsOpen(false)}>×</button>
+                            </div>
+                            <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                                {messages.map(m => (
+                                    <div key={m.id} className={`${m.sender === 'user' ? 'ml-auto bg-green-100' : 'mr-auto bg-gray-100'} p-2 rounded-lg max-w-[80%] text-sm`}>
+                                        {m.text}
+                                    </div>
+                                ))}
+                                <div ref={chatEndRef} />
+                            </div>
+                            <div className="p-3 border-t flex gap-2">
+                                <input 
+                                    value={input}
+                                    onChange={(e) => setInput(e.target.value)}
+                                    onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                                    className="flex-1 text-sm border rounded-full px-3 py-1 focus:outline-none focus:border-green-500"
+                                    placeholder="Escribe tu duda..."
+                                />
+                                <button onClick={handleSend} className="bg-green-600 text-white p-2 rounded-full">
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                    <button 
+                        onClick={() => setIsOpen(!isOpen)}
+                        className="bg-green-700 text-white p-4 rounded-full shadow-lg hover:scale-110 transition-transform flex items-center gap-2"
+                    >
+                        <span className="font-bold">IA Ayuda</span>
+                        <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                    </button>
+                </div>
+            );
+        };
+
+        // --- COMPONENTE PRINCIPAL ---
+        function App() {
+            const [formData, setFormData] = useState({ nombre: '', email: '', servicio: 'Residencial', mensaje: '' });
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                alert(`¡Gracias ${formData.nombre}! Hemos recibido tu solicitud de presupuesto para el servicio ${formData.servicio}. Nos contactaremos pronto.`);
+            };
+
+            return (
+                <div className="min-h-screen">
+                    {/* Header */}
+                    <nav className="fixed w-full z-40 glass-effect border-b border-green-100">
+                        <div className="container mx-auto px-6 py-4 flex justify-between items-center">
+                            <div className="flex items-center gap-2">
+                                <IconSparkles />
+                                <span className="text-2xl font-black text-green-700 tracking-tighter">ECOBRILLO PRO</span>
+                            </div>
+                            <div className="hidden md:flex gap-8 font-medium">
+                                <a href="#inicio" className="hover:text-green-600">Inicio</a>
+                                <a href="#servicios" className="hover:text-green-600">Servicios</a>
+                                <a href="#presupuesto" className="hover:text-green-600">Presupuesto</a>
+                                <a href="mailto:contacto@ecobrillo.com" className="flex items-center gap-1 text-green-600"><IconMail /> Gmail Directo</a>
+                            </div>
+                        </div>
+                    </nav>
+
+                    {/* Hero Section */}
+                    <section id="inicio" className="pt-32 pb-20 px-6 bg-green-50">
+                        <div className="container mx-auto flex flex-col md:flex-row items-center">
+                            <div className="md:w-1/2 space-y-6">
+                                <h1 className="text-5xl md:text-7xl font-black text-gray-900 leading-tight">
+                                    Limpieza <span className="text-green-600">Profesional</span> con Conciencia Verde.
+                                </h1>
+                                <p className="text-lg text-gray-600 max-w-lg">
+                                    Transformamos tus espacios en ambientes impecables y saludables utilizando tecnología de punta y productos eco-amigables.
+                                </p>
+                                <div className="flex gap-4">
+                                    <a href="#presupuesto" className="bg-green-600 text-white px-8 py-4 rounded-xl font-bold shadow-lg hover:bg-green-700 transition">Solicitar Presupuesto</a>
+                                    <a href="https://wa.me/123456789" className="border-2 border-green-600 text-green-600 px-8 py-4 rounded-xl font-bold hover:bg-green-50 transition">Ver Planes</a>
+                                </div>
+                            </div>
+                            <div className="md:w-1/2 mt-12 md:mt-0 relative">
+                                <img src="https://images.unsplash.com/photo-1581578731548-c64695cc6958?auto=format&fit=crop&q=80&w=800" alt="Limpieza" className="rounded-3xl shadow-2xl" />
+                                <div className="absolute -bottom-6 -left-6 bg-white p-6 rounded-2xl shadow-xl flex items-center gap-4">
+                                    <div className="bg-green-100 p-3 rounded-full"><IconCheck /></div>
+                                    <div>
+                                        <p className="font-bold text-lg">100% Garantizado</p>
+                                        <p className="text-sm text-gray-500">Satisfacción total del cliente</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Servicios */}
+                    <section id="servicios" className="py-20 px-6 container mx-auto">
+                        <div className="text-center mb-16">
+                            <h2 className="text-4xl font-black mb-4">Nuestros Servicios Especializados</h2>
+                            <div className="w-20 h-2 bg-green-500 mx-auto rounded-full"></div>
+                        </div>
+                        <div className="grid md:grid-cols-3 gap-8">
+                            {[
+                                { title: "Limpieza Residencial", desc: "Casas y apartamentos impecables con atención al detalle.", icon: "🏠" },
+                                { title: "Aseo Corporativo", desc: "Oficinas y locales comerciales que inspiran confianza.", icon: "🏢" },
+                                { title: "Desinfección Profunda", desc: "Eliminación de virus y bacterias con productos certificados.", icon: "🛡️" }
+                            ].map((s, i) => (
+                                <div key={i} className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hover:shadow-xl transition group">
+                                    <div className="text-4xl mb-4">{s.icon}</div>
+                                    <h3 className="text-2xl font-bold mb-3 group-hover:text-green-600 transition">{s.title}</h3>
+                                    <p className="text-gray-600 leading-relaxed">{s.desc}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+
+                    {/* Presupuesto Form */}
+                    <section id="presupuesto" className="py-20 px-6 bg-green-gradient text-white">
+                        <div className="container mx-auto max-w-4xl bg-white rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row">
+                            <div className="md:w-1/3 bg-green-800 p-10 flex flex-col justify-center">
+                                <h3 className="text-3xl font-bold mb-4">Cotiza Ahora</h3>
+                                <p className="opacity-80 mb-6">Recibe una propuesta personalizada en menos de 2 horas.</p>
+                                <div className="space-y-4">
+                                    <div className="flex items-center gap-3"><span>📞</span> +1 234 567 890</div>
+                                    <div className="flex items-center gap-3"><span>📍</span> Ciudad Principal, Centro</div>
+                                </div>
+                            </div>
+                            <div className="md:w-2/3 p-10 text-gray-800">
+                                <form onSubmit={handleSubmit} className="space-y-4">
+                                    <div className="grid md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="text-sm font-bold text-gray-500 uppercase">Nombre</label>
+                                            <input 
+                                                type="text" required
+                                                className="w-full border-b-2 border-gray-200 focus:border-green-500 outline-none py-2 transition" 
+                                                onChange={(e) => setFormData({...formData, nombre: e.target.value})}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="text-sm font-bold text-gray-500 uppercase">Email</label>
+                                            <input 
+                                                type="email" required
+                                                className="w-full border-b-2 border-gray-200 focus:border-green-500 outline-none py-2 transition"
+                                                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="text-sm font-bold text-gray-500 uppercase">Tipo de Servicio</label>
+                                        <select 
+                                            className="w-full border-b-2 border-gray-200 focus:border-green-500 outline-none py-2 transition bg-transparent"
+                                            onChange={(e) => setFormData({...formData, servicio: e.target.value})}
+                                        >
+                                            <option>Residencial</option>
+                                            <option>Comercial</option>
+                                            <option>Limpieza de Obra</option>
+                                            <option>Vidrios y Fachadas</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="text-sm font-bold text-gray-500 uppercase">Mensaje Adicional</label>
+                                        <textarea 
+                                            rows="3" 
+                                            className="w-full border-b-2 border-gray-200 focus:border-green-500 outline-none py-2 transition"
+                                            onChange={(e) => setFormData({...formData, mensaje: e.target.value})}
+                                        ></textarea>
+                                    </div>
+                                    <button className="w-full bg-green-600 text-white font-black py-4 rounded-xl hover:bg-green-700 shadow-lg transition transform hover:-translate-y-1">
+                                        ENVIAR SOLICITUD
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Footer */}
+                    <footer className="bg-gray-900 text-white py-12 px-6">
+                        <div className="container mx-auto grid md:grid-cols-4 gap-12">
+                            <div className="col-span-2">
+                                <div className="flex items-center gap-2 mb-6">
+                                    <IconSparkles />
+                                    <span className="text-2xl font-black tracking-tighter">ECOBRILLO PRO</span>
+                                </div>
+                                <p className="text-gray-400 max-w-sm">
+                                    Líderes en servicios de aseo integral con enfoque ecológico. Cuidamos tu salud y el planeta al mismo tiempo.
+                                </p>
+                            </div>
+                            <div>
+                                <h4 className="font-bold mb-6">Navegación</h4>
+                                <ul className="space-y-4 text-gray-400">
+                                    <li><a href="#inicio" className="hover:text-white">Inicio</a></li>
+                                    <li><a href="#servicios" className="hover:text-white">Servicios</a></li>
+                                    <li><a href="#presupuesto" className="hover:text-white">Presupuesto</a></li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 className="font-bold mb-6">Contacto</h4>
+                                <div className="space-y-4">
+                                    <a href="mailto:info@ecobrillo.com" className="flex items-center gap-2 text-green-400 hover:text-green-300">
+                                        <IconMail /> info@ecobrillo.com
+                                    </a>
+                                    <a href="https://wa.me/123456789" className="flex items-center gap-2 text-green-400 hover:text-green-300">
+                                        <IconWhatsapp /> +1 234 567 890
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="container mx-auto border-t border-gray-800 mt-12 pt-8 text-center text-gray-500 text-sm">
+                            © 2024 EcoBrillo Pro. Todos los derechos reservados.
+                        </div>
+                    </footer>
+
+                    {/* WhatsApp Flotante */}
+                    <a 
+                        href="https://wa.me/123456789" 
+                        target="_blank" 
+                        className="fixed bottom-6 right-6 bg-green-500 text-white p-4 rounded-full shadow-2xl hover:bg-green-600 transition-all transform hover:scale-110 z-50 flex items-center justify-center"
+                        title="Chatea con nosotros"
+                    >
+                        <IconWhatsapp />
+                    </a>
+
+                    {/* Chat de IA */}
+                    <AIChatBot />
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
